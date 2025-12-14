@@ -16,3 +16,6 @@ This project is a simple cryptocurrency dashboard.
 
 2. Run the program:
    python my_project.py
+
+## Demo Video
+[text](https://drive.google.com/file/d/1BMSxv-41SR_QUtJ-CyJqzGYQkKZVCsjw/view?usp=drive_link)   
