@@ -3,6 +3,8 @@ from tkinter import ttk
 import websocket
 import json
 import threading
+import time
+from time import strftime
 
 class DashBoard:
     def __init__(self, root):
@@ -53,17 +55,25 @@ class DashBoard:
         self.volume_label = ttk.Label(right_frame, text = 'Volume (24 hr): -', font = ('Arial', 16))
         self.volume_label.pack(pady = 5)
 
+        self.update_time_label = ttk.Label(right_frame, text = 'Last Update: -', font = ('Arial', 15))
+        self.update_time_label.pack(pady = 5)
+
         #create crypto tracker
         self.BTC_tracker = CryptoTicker(self.price_label, self.change_label,
-                                        self.volume_label, 'btcusdt')
+                                        self.volume_label, self.update_time_label,
+                                          'btcusdt')
         self.ETH_ticker = CryptoTicker(self.price_label, self.change_label,
-                                       self.volume_label, 'ethusdt')
+                                       self.volume_label, self.update_time_label,
+                                         'ethusdt')
         self.SOL_ticker = CryptoTicker(self.price_label, self.change_label,
-                                       self.volume_label, 'solusdt')
+                                       self.volume_label, self.update_time_label,
+                                         'solusdt')
         self.BNB_ticker = CryptoTicker(self.price_label, self.change_label,
-                                       self.volume_label, 'bnbusdt')
+                                       self.volume_label, self.update_time_label,
+                                         'bnbusdt')
         self.XRP_ticker = CryptoTicker(self.price_label, self.change_label,
-                                       self.volume_label, 'xrpusdt')
+                                       self.volume_label, self.update_time_label,
+                                         'xrpusdt')
 
     def select_coin(self, coin):
         #close opened tracker that open when clicked
@@ -113,10 +123,11 @@ class DashBoard:
 
 #class update price from web
 class CryptoTicker:
-    def __init__(self, price_label, change_label, volume_label, coin_sym):
+    def __init__(self, price_label, change_label, volume_label, update_time_label, coin_sym):
         self.change_label = change_label
         self.price_label = price_label
         self.volume_label = volume_label
+        self.update_time_label = update_time_label
         self.coin = coin_sym
         self.is_active = False
         self.ws = None
@@ -172,7 +183,10 @@ class CryptoTicker:
             text=f"{sign}{change:,.2f} ({sign}{percent:.2f}%)",
             foreground=color
         )
+        #change Volume
         self.volume_label.config(text = f"Volume (24hr): {volume:,.0f}")
+        #change update time
+        self.update_time_label.config(text = f"Last Update: {strftime('%H:%M:%S')}")
 
 #create window
 root = tk.Tk()
