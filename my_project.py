@@ -10,6 +10,7 @@ class DashBoard:
         self.root.title('Crypto Dashboard')
         self.root.geometry('800x400')
         self.current_tracker = None
+        self.expanded = False
 
         #create frame
         main_frame = ttk.Frame(root)
@@ -29,6 +30,15 @@ class DashBoard:
                    command = lambda:self.select_coin('ETH/USDT')).pack(fill = 'x', pady = 10)
         ttk.Button(left_frame, text = 'SOL/USDT',
                    command = lambda:self.select_coin('SOL/USDT')).pack(fill = 'x', pady = 10)
+        #expand button
+        self.button_show = ttk.Button(left_frame, text = 'show more',
+                   command = lambda:self.show_more_less())
+        self.button_show.pack(fill = 'x', pady = 20)
+        #create hidden button
+        self.coin_D = ttk.Button(left_frame, text = 'BNB/USDT',
+                                 command = lambda:self.select_coin('BNB/USDT'))
+        self.coin_E = ttk.Button(left_frame, text = 'XRP/USDT',
+                                 command = lambda:self.select_coin('XRP/USDT'))
 
         #create label to display text in right side
         self.title_label = ttk.Label(right_frame, text = 'Select a coin.', font = ('Arial', 30))
@@ -44,6 +54,8 @@ class DashBoard:
         self.BTC_tracker = CryptoTicker(self.price_label, self.change_label, 'btcusdt')
         self.ETH_ticker = CryptoTicker(self.price_label, self.change_label, 'ethusdt')
         self.SOL_ticker = CryptoTicker(self.price_label, self.change_label, 'solusdt')
+        self.BNB_ticker = CryptoTicker(self.price_label, self.change_label, 'bnbusdt')
+        self.XRP_ticker = CryptoTicker(self.price_label, self.change_label, 'xrpusdt')
 
     def select_coin(self, coin):
         #close opened tracker that open when clicked
@@ -65,6 +77,31 @@ class DashBoard:
             elif coin == 'SOL/USDT':
                 self.SOL_ticker.start()
                 self.current_tracker = self.SOL_ticker
+
+            elif coin == 'BNB/USDT':
+                self.SOL_ticker.start()
+                self.current_tracker = self.SOL_ticker
+
+            elif coin == 'XRP/USDT':
+                self.SOL_ticker.start()
+                self.current_tracker = self.SOL_ticker        
+
+    def show_more_less(self):
+        if self.expanded == False:
+            self.button_show.pack_forget()
+            self.coin_D.pack(fill = 'x', pady = 10)
+            self.coin_E.pack(fill = 'x', pady = 10)
+            self.button_show.config(text = 'show less')
+            self.button_show.pack(fill = 'x', pady = 20)
+            self.expanded = True
+        else:
+            self.coin_D.pack_forget()
+            self.coin_E.pack_forget()
+            self.button_show.pack_forget()
+            self.button_show.config(text = 'show more')
+            self.button_show.pack(fill = 'x', pady = 20)
+            self.expanded = False
+
 
 #class update price from web
 class CryptoTicker:
@@ -130,4 +167,3 @@ class CryptoTicker:
 root = tk.Tk()
 app = DashBoard(root)
 root.mainloop()
-#need to add togle/show 2 more crypto
