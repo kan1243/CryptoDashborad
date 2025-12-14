@@ -41,39 +41,46 @@ class DashBoard:
                                  command = lambda:self.select_coin('BNB/USDT'))
         self.coin_E = ttk.Button(left_frame, text = 'XRP/USDT',
                                  command = lambda:self.select_coin('XRP/USDT'))
+        
+        #create data border
+        self.data_border = tk.Frame(right_frame, bg = '#e5e7eb', padx = 2, pady = 2)
+        self.data_border.pack(pady = 20)
+        #create data frame in data border
+        data_frame = ttk.Frame(self.data_border, padding = 20)
+        data_frame.pack()
 
         #create label to display text in right side
-        self.title_label = ttk.Label(right_frame, text = 'Select a coin.', font = ('Arial', 30))
+        self.title_label = ttk.Label(data_frame, text = 'Select a coin.', font = ('Arial', 30))
         self.title_label.pack(pady = 20)
 
-        self.price_label = ttk.Label(right_frame, text = 'Price: -', font = ('Arial', 20))
+        self.price_label = ttk.Label(data_frame, text = 'Price: -', font = ('Arial', 20))
         self.price_label.pack()
 
-        self.change_label = ttk.Label(right_frame, text = 'Change: --(-%)', font = ('Arial', 16))
+        self.change_label = ttk.Label(data_frame, text = 'Change: --(-%)', font = ('Arial', 16))
         self.change_label.pack(pady = 5)
 
-        self.volume_label = ttk.Label(right_frame, text = 'Volume (24 hr): -', font = ('Arial', 16), foreground = 'blue')
+        self.volume_label = ttk.Label(data_frame, text = 'Volume (24 hr): -', font = ('Arial', 16), foreground = 'blue')
         self.volume_label.pack(pady = 5)
 
-        self.update_time_label = ttk.Label(right_frame, text = 'Last Update: -', font = ('Arial', 15))
+        self.update_time_label = ttk.Label(data_frame, text = 'Last Update: -', font = ('Arial', 15), foreground = '#6b7280')
         self.update_time_label.pack(pady = 5)
 
         #create crypto tracker
         self.BTC_tracker = CryptoTicker(self.price_label, self.change_label,
                                         self.volume_label, self.update_time_label,
-                                          'btcusdt')
+                                          'btcusdt', self.data_border)
         self.ETH_ticker = CryptoTicker(self.price_label, self.change_label,
                                        self.volume_label, self.update_time_label,
-                                         'ethusdt')
+                                          'ethusdt', self.data_border)
         self.SOL_ticker = CryptoTicker(self.price_label, self.change_label,
                                        self.volume_label, self.update_time_label,
-                                         'solusdt')
+                                         'solusdt', self.data_border)
         self.BNB_ticker = CryptoTicker(self.price_label, self.change_label,
                                        self.volume_label, self.update_time_label,
-                                         'bnbusdt')
+                                          'bnbusdt', self.data_border)
         self.XRP_ticker = CryptoTicker(self.price_label, self.change_label,
                                        self.volume_label, self.update_time_label,
-                                         'xrpusdt')
+                                          'xrpusdt', self.data_border)
 
     def select_coin(self, coin):
         #close opened tracker that open when clicked
@@ -123,12 +130,13 @@ class DashBoard:
 
 #class update price from web
 class CryptoTicker:
-    def __init__(self, price_label, change_label, volume_label, update_time_label, coin_sym):
+    def __init__(self, price_label, change_label, volume_label, update_time_label, coin_sym, data_border):
         self.change_label = change_label
         self.price_label = price_label
         self.volume_label = volume_label
         self.update_time_label = update_time_label
         self.coin = coin_sym
+        self.data_border = data_border
         self.is_active = False
         self.ws = None
 
@@ -164,7 +172,7 @@ class CryptoTicker:
         price = float(data['c']) #current price
         change = float(data['p']) #change from previous price
         percent = float(data['P']) #percent change
-        volume = float(data['v']) #24hr volume
+        volume = float(data['v']) #24hr amount of buy-sell 
 
         self.price_label.after(0, self.update_display, price, change, percent, volume) 
         '''to output the following variable but not bugging the code'''
@@ -176,6 +184,10 @@ class CryptoTicker:
         #set color up to change
         color = "green" if change >= 0 else "red"
         self.price_label.config(text = f"Price: {price:,.2f}", foreground=color)
+
+        #set color border up to change
+        border_color = '#d1fae5' if change >= 0 else '#fee2e2'
+        self.data_border.config(bg = border_color)
 
         #apply + or - up to change
         sign = "+" if change >= 0 else ""
