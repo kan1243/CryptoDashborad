@@ -52,7 +52,7 @@ class DashBoard:
         self.change_label = ttk.Label(right_frame, text = 'Change: --(-%)', font = ('Arial', 16))
         self.change_label.pack(pady = 5)
 
-        self.volume_label = ttk.Label(right_frame, text = 'Volume (24 hr): -', font = ('Arial', 16))
+        self.volume_label = ttk.Label(right_frame, text = 'Volume (24 hr): -', font = ('Arial', 16), foreground = 'blue')
         self.volume_label.pack(pady = 5)
 
         self.update_time_label = ttk.Label(right_frame, text = 'Last Update: -', font = ('Arial', 15))
@@ -185,6 +185,7 @@ class CryptoTicker:
         )
         #change Volume
         self.volume_label.config(text = f"Volume (24hr): {volume:,.0f}")
+
         #change update time
         self.update_time_label.config(text = f"Last Update: {strftime('%H:%M:%S')}")
 
