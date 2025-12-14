@@ -50,12 +50,20 @@ class DashBoard:
         self.change_label = ttk.Label(right_frame, text = 'Change: --(-%)', font = ('Arial', 16))
         self.change_label.pack(pady = 5)
 
+        self.volume_label = ttk.Label(right_frame, text = 'Volume (24 hr): -', font = ('Arial', 16))
+        self.volume_label.pack(pady = 5)
+
         #create crypto tracker
-        self.BTC_tracker = CryptoTicker(self.price_label, self.change_label, 'btcusdt')
-        self.ETH_ticker = CryptoTicker(self.price_label, self.change_label, 'ethusdt')
-        self.SOL_ticker = CryptoTicker(self.price_label, self.change_label, 'solusdt')
-        self.BNB_ticker = CryptoTicker(self.price_label, self.change_label, 'bnbusdt')
-        self.XRP_ticker = CryptoTicker(self.price_label, self.change_label, 'xrpusdt')
+        self.BTC_tracker = CryptoTicker(self.price_label, self.change_label,
+                                        self.volume_label, 'btcusdt')
+        self.ETH_ticker = CryptoTicker(self.price_label, self.change_label,
+                                       self.volume_label, 'ethusdt')
+        self.SOL_ticker = CryptoTicker(self.price_label, self.change_label,
+                                       self.volume_label, 'solusdt')
+        self.BNB_ticker = CryptoTicker(self.price_label, self.change_label,
+                                       self.volume_label, 'bnbusdt')
+        self.XRP_ticker = CryptoTicker(self.price_label, self.change_label,
+                                       self.volume_label, 'xrpusdt')
 
     def select_coin(self, coin):
         #close opened tracker that open when clicked
@@ -70,7 +78,7 @@ class DashBoard:
                 self.BTC_tracker.start()
                 self.current_tracker = self.BTC_tracker
 
-            elif coin == 'ETH/USDT ':
+            elif coin == 'ETH/USDT':
                 self.ETH_ticker.start()
                 self.current_tracker = self.ETH_ticker
 
@@ -79,12 +87,12 @@ class DashBoard:
                 self.current_tracker = self.SOL_ticker
 
             elif coin == 'BNB/USDT':
-                self.SOL_ticker.start()
-                self.current_tracker = self.SOL_ticker
+                self.BNB_ticker.start()
+                self.current_tracker = self.BNB_ticker
 
             elif coin == 'XRP/USDT':
-                self.SOL_ticker.start()
-                self.current_tracker = self.SOL_ticker        
+                self.XRP_ticker.start()
+                self.current_tracker = self.XRP_ticker        
 
     def show_more_less(self):
         if self.expanded == False:
@@ -105,9 +113,10 @@ class DashBoard:
 
 #class update price from web
 class CryptoTicker:
-    def __init__(self, price_label, change_label, coin_sym):
+    def __init__(self, price_label, change_label, volume_label, coin_sym):
         self.change_label = change_label
         self.price_label = price_label
+        self.volume_label = volume_label
         self.coin = coin_sym
         self.is_active = False
         self.ws = None
@@ -144,17 +153,18 @@ class CryptoTicker:
         price = float(data['c']) #current price
         change = float(data['p']) #change from previous price
         percent = float(data['P']) #percent change
+        volume = float(data['v']) #24hr volume
 
-        self.price_label.after(0, self.update_display, price, change, percent) 
+        self.price_label.after(0, self.update_display, price, change, percent, volume) 
         '''to output the following variable but not bugging the code'''
 
-    def update_display(self, price, change, percent):
+    def update_display(self, price, change, percent, volume):
         if not self.is_active:
             return
         
         #set color up to change
         color = "green" if change >= 0 else "red"
-        self.price_label.config(text=f"Price: {price:,.2f}", foreground=color)
+        self.price_label.config(text = f"Price: {price:,.2f}", foreground=color)
 
         #apply + or - up to change
         sign = "+" if change >= 0 else ""
@@ -162,6 +172,7 @@ class CryptoTicker:
             text=f"{sign}{change:,.2f} ({sign}{percent:.2f}%)",
             foreground=color
         )
+        self.volume_label.config(text = f"Volume (24hr): {volume:,.0f}")
 
 #create window
 root = tk.Tk()
